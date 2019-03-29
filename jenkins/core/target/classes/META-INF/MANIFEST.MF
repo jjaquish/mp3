@@ -1,0 +1,45 @@
+Manifest-Version: 1.0
+Built-By: jtja234
+Class-Path: icon-set-1.0.5.jar remoting-2.50.jar constant-pool-scanner
+ -1.2.jar cli-1.610-SNAPSHOT.jar version-number-1.1.jar crypto-util-1.
+ 1.jar jtidy-4aug2000r7-dev-hudson-1.jar guice-4.0-beta.jar javax.inje
+ ct-1.jar aopalliance-1.0.jar jna-posix-1.0.3-jenkins-1.jar jnr-posix-
+ 3.0.1.jar jnr-ffi-1.0.7.jar jffi-1.2.7.jar jffi-1.2.7-native.jar asm-
+ 4.0.jar asm-commons-4.0.jar asm-analysis-4.0.jar asm-tree-4.0.jar asm
+ -util-4.0.jar jnr-x86asm-1.0.2.jar jnr-constants-0.8.5.jar trilead-pu
+ tty-extension-1.2.jar trilead-ssh2-build217-jenkins-8.jar stapler-gro
+ ovy-1.236.jar stapler-jelly-1.236.jar commons-jelly-1.1-jenkins-20120
+ 928.jar dom4j-1.6.1-jenkins-4.jar stapler-jrebel-1.236.jar stapler-1.
+ 236.jar javax.annotation-api-1.2.jar commons-discovery-0.4.jar tiger-
+ types-1.3.jar windows-package-checker-1.0.jar stapler-adjunct-zerocli
+ pboard-1.3.5-1.jar stapler-adjunct-timeline-1.4.jar stapler-adjunct-c
+ odemirror-1.3.jar bridge-method-annotation-1.13.jar json-lib-2.4-jenk
+ ins-2.jar ezmorph-1.0.6.jar commons-httpclient-3.1.jar args4j-2.0.31.
+ jar annotation-indexer-1.7.jar bytecode-compatibility-transformer-1.5
+ .jar asm5-5.0.1.jar task-reactor-1.4.jar localizer-1.23.jar antlr-2.7
+ .6.jar xstream-1.4.7-jenkins-1.jar jfreechart-1.0.9.jar jcommon-1.0.1
+ 2.jar ant-1.8.4.jar ant-launcher-1.8.4.jar commons-io-2.4.jar commons
+ -lang-2.6.jar commons-digester-2.1.jar commons-beanutils-1.8.3.jar co
+ mmons-compress-1.9.jar mail-1.4.4.jar activation-1.1.1-hudson-1.jar j
+ axen-1.1-beta-11.jar commons-jelly-tags-fmt-1.0.jar commons-jelly-tag
+ s-xml-1.1.jar commons-jelly-tags-define-1.0.1-hudson-20071021.jar com
+ mons-jexl-1.1-jenkins-20111212.jar acegi-security-1.0.7.jar spring-jd
+ bc-1.2.9.jar spring-dao-1.2.9.jar oro-2.0.8.jar log4j-1.2.9.jar groov
+ y-all-1.8.9.jar jline-0.9.94.jar jansi-1.9.jar spring-webmvc-2.5.6.SE
+ C03.jar spring-beans-2.5.6.SEC03.jar spring-context-2.5.6.SEC03.jar s
+ pring-context-support-2.5.6.SEC03.jar spring-web-2.5.6.SEC03.jar spri
+ ng-core-2.5.6.SEC03.jar spring-aop-2.5.6.SEC03.jar xpp3-1.1.4c.jar js
+ tl-1.1.0.jar commons-logging-1.1.3.jar txw2-20110809.jar stax-api-1.0
+ -2.jar relaxngDatatype-20020414.jar commons-collections-3.2.1.jar win
+ p-1.22.jar memory-monitor-1.9.jar wstx-asl-3.2.9.jar stax-api-1.0.1.j
+ ar jmdns-3.4.0-jenkins-3.jar jna-4.1.0.jar akuma-1.9.jar libpam4j-1.8
+ .jar libzfs-0.5.jar embedded_su4j-1.1.jar sezpoz-1.9.jar j-interop-2.
+ 0.6-kohsuke-1.jar j-interopdeps-2.0.6-kohsuke-1.jar jcifs-1.3.17-kohs
+ uke-1.jar robust-http-client-1.2.jar commons-codec-1.8.jar access-mod
+ ifier-annotation-1.4.jar commons-fileupload-1.3.1-jenkins-1.jar jbcry
+ pt-0.3m.jar guava-11.0.1.jar jsr305-1.3.9.jar jzlib-1.1.3-kohsuke-1.j
+ ar
+Build-Jdk: 1.8.0_191
+Created-By: Maven Integration for Eclipse
+Main-Class: hudson.Main
+
