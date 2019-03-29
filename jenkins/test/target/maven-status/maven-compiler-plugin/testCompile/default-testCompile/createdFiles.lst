@@ -182,6 +182,7 @@ hudson/LauncherTest$QuietShell.class
 hudson/tasks/MavenTest.class
 hudson/cli/UpdateViewCommandTest.class
 hudson/cli/CLIActionTest.class
+jenkins/model/CopyOfJenkinsTest.class
 jenkins/tasks/SimpleBuildWrapperTest$WrapperWithEnvOverrideExpand.class
 hudson/model/labels/LabelAtomPropertyTest$LabelAtomPropertyImpl.class
 hudson/model/ProjectTest$JobPropertyImp.class

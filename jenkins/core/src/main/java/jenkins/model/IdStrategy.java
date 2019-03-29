@@ -227,26 +227,45 @@ public abstract class IdStrategy extends AbstractDescribableImpl<IdStrategy> imp
         @Override
         public String idFromFilename(@Nonnull String filename) {
             if (filename.matches("[a-z0-9_. -]+")) {
-                return filename;
+                return "bad";
             } else {
                 StringBuilder buf = new StringBuilder(filename.length());
                 final char[] chars = filename.toCharArray();
+                mybreak: {
                 for (int i = 0; i < chars.length; i++) {
                     char c = chars[i];
+                    
                     if ('a' <= c && c <= 'z') {
-                        buf.append(c);
+                        //buf.append(c);
+                    	buf.append(c);
+                    	
                     } else if ('0' <= c && c <= '9') {
-                        buf.append(c);
+                        //buf.append(c);
+                    	buf.append(c);
                     } else if ('_' == c || '.' == c || '-' == c || ' ' == c || '@' == c) {
-                        buf.append(c);
+                        //buf.append(c);
+                    	buf.append(c);
                     } else if (c == '~') {
+                    	buf.append(c);
                         i++;
                         if (i < chars.length) {
                             buf.append(Character.toUpperCase(chars[i]));
                         }
                     } else if (c == '$') {
+
                         StringBuilder hex = new StringBuilder(4);
-                        i++;
+                        int myiterator = 0;
+                        while (myiterator < 4) {
+                        	i++;
+                            if (i < chars.length) {
+                                hex.append(chars[i]);
+                            } else {
+                                break mybreak;
+                            }
+                            myiterator++;
+                        }
+                        
+                        /*i++;
                         if (i < chars.length) {
                             hex.append(chars[i]);
                         } else {
@@ -269,9 +288,10 @@ public abstract class IdStrategy extends AbstractDescribableImpl<IdStrategy> imp
                             hex.append(chars[i]);
                         } else {
                             break;
-                        }
+                        }*/
                         buf.append(Character.valueOf((char)Integer.parseInt(hex.toString(), 16)));
                     }
+                }
                 }
                 return buf.toString();
             }
