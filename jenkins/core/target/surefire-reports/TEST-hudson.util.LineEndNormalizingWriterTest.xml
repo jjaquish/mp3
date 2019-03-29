@@ -60,6 +60,6 @@
     <property name="sun.cpu.isalist" value=""/>
   </properties>
   <testcase name="test1" classname="hudson.util.LineEndNormalizingWriterTest" time="0"/>
-  <testcase name="test2" classname="hudson.util.LineEndNormalizingWriterTest" time="0"/>
-  <testcase name="test3" classname="hudson.util.LineEndNormalizingWriterTest" time="0.001"/>
+  <testcase name="test2" classname="hudson.util.LineEndNormalizingWriterTest" time="0.001"/>
+  <testcase name="test3" classname="hudson.util.LineEndNormalizingWriterTest" time="0"/>
 </testsuite>

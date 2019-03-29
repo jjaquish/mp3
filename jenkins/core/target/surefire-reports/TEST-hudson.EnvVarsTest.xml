@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="hudson.EnvVarsTest" time="0" tests="7" errors="0" skipped="0" failures="0">
+<testsuite name="hudson.EnvVarsTest" time="0.003" tests="7" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64"/>
@@ -62,8 +62,8 @@
   <testcase name="overrideOrderCalculatorSelfReference" classname="hudson.EnvVarsTest" time="0"/>
   <testcase name="caseInsensitive" classname="hudson.EnvVarsTest" time="0"/>
   <testcase name="overrideOrderCalculatorMultiple" classname="hudson.EnvVarsTest" time="0"/>
-  <testcase name="overrideOrderCalculatorCyclic" classname="hudson.EnvVarsTest" time="0"/>
+  <testcase name="overrideOrderCalculatorCyclic" classname="hudson.EnvVarsTest" time="0.001"/>
   <testcase name="overrideExpandingAll" classname="hudson.EnvVarsTest" time="0"/>
-  <testcase name="overrideOrderCalculatorSimple" classname="hudson.EnvVarsTest" time="0"/>
+  <testcase name="overrideOrderCalculatorSimple" classname="hudson.EnvVarsTest" time="0.002"/>
   <testcase name="overrideOrderCalculatorInOrder" classname="hudson.EnvVarsTest" time="0"/>
 </testsuite>

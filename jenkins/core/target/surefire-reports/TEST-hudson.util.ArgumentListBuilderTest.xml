@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="hudson.util.ArgumentListBuilderTest" time="0.052" tests="11" errors="0" skipped="0" failures="0">
+<testsuite name="hudson.util.ArgumentListBuilderTest" time="0.027" tests="11" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64"/>
@@ -59,8 +59,8 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase name="assertMaskOnClone" classname="hudson.util.ArgumentListBuilderTest" time="0.025"/>
-  <testcase name="addKeyValuePairsFromPropertyString" classname="hudson.util.ArgumentListBuilderTest" time="0.006"/>
+  <testcase name="assertMaskOnClone" classname="hudson.util.ArgumentListBuilderTest" time="0.007"/>
+  <testcase name="addKeyValuePairsFromPropertyString" classname="hudson.util.ArgumentListBuilderTest" time="0.018"/>
   <testcase name="assertSeveralMaskedArguments" classname="hudson.util.ArgumentListBuilderTest" time="0.001"/>
   <testcase name="assertEmptyMask" classname="hudson.util.ArgumentListBuilderTest" time="0"/>
   <testcase name="assertLastArgumentIsMasked" classname="hudson.util.ArgumentListBuilderTest" time="0"/>
@@ -68,6 +68,6 @@
   <testcase name="testToWindowsCommand" classname="hudson.util.ArgumentListBuilderTest" time="0.001"/>
   <testcase name="numberOfBackslashesInPropertiesShouldBePreservedAfterMacroExpansion" classname="hudson.util.ArgumentListBuilderTest" time="0"/>
   <testcase name="assertKeyValuePairsWithMask" classname="hudson.util.ArgumentListBuilderTest" time="0"/>
-  <testcase name="assertPrependAfterAddingMasked" classname="hudson.util.ArgumentListBuilderTest" time="0.019"/>
+  <testcase name="assertPrependAfterAddingMasked" classname="hudson.util.ArgumentListBuilderTest" time="0"/>
   <testcase name="assertPrependBeforeAddingMasked" classname="hudson.util.ArgumentListBuilderTest" time="0"/>
 </testsuite>

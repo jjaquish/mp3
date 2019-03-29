@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="hudson.scheduler.CronTabEventualityTest" time="0.15" tests="27" errors="0" skipped="0" failures="0">
+<testsuite name="hudson.scheduler.CronTabEventualityTest" time="0.261" tests="27" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64"/>
@@ -59,31 +59,31 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase name="testFirstSundayOfMonthWillBeEventuallyTriggeredWithinOneMonthAndOneWeek[0]" classname="hudson.scheduler.CronTabEventualityTest" time="0.135"/>
-  <testcase name="testWeeklyWillBeEventuallyTriggeredWithinOneWeek[0]" classname="hudson.scheduler.CronTabEventualityTest" time="0.002"/>
-  <testcase name="testMidnightWillBeEventuallyTriggeredWithinOneDay[0]" classname="hudson.scheduler.CronTabEventualityTest" time="0.001"/>
-  <testcase name="testDailyWillBeEventuallyTriggeredWithinOneDay[0]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
-  <testcase name="testYearlyWillBeEventuallyTriggeredWithinOneYear[0]" classname="hudson.scheduler.CronTabEventualityTest" time="0.001"/>
+  <testcase name="testFirstSundayOfMonthWillBeEventuallyTriggeredWithinOneMonthAndOneWeek[0]" classname="hudson.scheduler.CronTabEventualityTest" time="0.237"/>
+  <testcase name="testWeeklyWillBeEventuallyTriggeredWithinOneWeek[0]" classname="hudson.scheduler.CronTabEventualityTest" time="0.001"/>
+  <testcase name="testMidnightWillBeEventuallyTriggeredWithinOneDay[0]" classname="hudson.scheduler.CronTabEventualityTest" time="0.006"/>
+  <testcase name="testDailyWillBeEventuallyTriggeredWithinOneDay[0]" classname="hudson.scheduler.CronTabEventualityTest" time="0.001"/>
+  <testcase name="testYearlyWillBeEventuallyTriggeredWithinOneYear[0]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
   <testcase name="testMonthlyWillBeEventuallyTriggeredWithinOneMonth[0]" classname="hudson.scheduler.CronTabEventualityTest" time="0.001"/>
-  <testcase name="testAnnuallyWillBeEventuallyTriggeredWithinOneYear[0]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
+  <testcase name="testAnnuallyWillBeEventuallyTriggeredWithinOneYear[0]" classname="hudson.scheduler.CronTabEventualityTest" time="0.002"/>
   <testcase name="testFirstDayOfMonthWillBeEventuallyTriggeredWithinOneMonth[0]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
-  <testcase name="testHourlyWillBeEventuallyTriggeredWithinOneHour[0]" classname="hudson.scheduler.CronTabEventualityTest" time="0.002"/>
-  <testcase name="testFirstSundayOfMonthWillBeEventuallyTriggeredWithinOneMonthAndOneWeek[1]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
-  <testcase name="testWeeklyWillBeEventuallyTriggeredWithinOneWeek[1]" classname="hudson.scheduler.CronTabEventualityTest" time="0.001"/>
-  <testcase name="testMidnightWillBeEventuallyTriggeredWithinOneDay[1]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
+  <testcase name="testHourlyWillBeEventuallyTriggeredWithinOneHour[0]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
+  <testcase name="testFirstSundayOfMonthWillBeEventuallyTriggeredWithinOneMonthAndOneWeek[1]" classname="hudson.scheduler.CronTabEventualityTest" time="0.004"/>
+  <testcase name="testWeeklyWillBeEventuallyTriggeredWithinOneWeek[1]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
+  <testcase name="testMidnightWillBeEventuallyTriggeredWithinOneDay[1]" classname="hudson.scheduler.CronTabEventualityTest" time="0.001"/>
   <testcase name="testDailyWillBeEventuallyTriggeredWithinOneDay[1]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
-  <testcase name="testYearlyWillBeEventuallyTriggeredWithinOneYear[1]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
+  <testcase name="testYearlyWillBeEventuallyTriggeredWithinOneYear[1]" classname="hudson.scheduler.CronTabEventualityTest" time="0.001"/>
   <testcase name="testMonthlyWillBeEventuallyTriggeredWithinOneMonth[1]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
   <testcase name="testAnnuallyWillBeEventuallyTriggeredWithinOneYear[1]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
-  <testcase name="testFirstDayOfMonthWillBeEventuallyTriggeredWithinOneMonth[1]" classname="hudson.scheduler.CronTabEventualityTest" time="0.002"/>
+  <testcase name="testFirstDayOfMonthWillBeEventuallyTriggeredWithinOneMonth[1]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
   <testcase name="testHourlyWillBeEventuallyTriggeredWithinOneHour[1]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
-  <testcase name="testFirstSundayOfMonthWillBeEventuallyTriggeredWithinOneMonthAndOneWeek[2]" classname="hudson.scheduler.CronTabEventualityTest" time="0.001"/>
-  <testcase name="testWeeklyWillBeEventuallyTriggeredWithinOneWeek[2]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
-  <testcase name="testMidnightWillBeEventuallyTriggeredWithinOneDay[2]" classname="hudson.scheduler.CronTabEventualityTest" time="0.001"/>
+  <testcase name="testFirstSundayOfMonthWillBeEventuallyTriggeredWithinOneMonthAndOneWeek[2]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
+  <testcase name="testWeeklyWillBeEventuallyTriggeredWithinOneWeek[2]" classname="hudson.scheduler.CronTabEventualityTest" time="0.001"/>
+  <testcase name="testMidnightWillBeEventuallyTriggeredWithinOneDay[2]" classname="hudson.scheduler.CronTabEventualityTest" time="0.006"/>
   <testcase name="testDailyWillBeEventuallyTriggeredWithinOneDay[2]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
-  <testcase name="testYearlyWillBeEventuallyTriggeredWithinOneYear[2]" classname="hudson.scheduler.CronTabEventualityTest" time="0.001"/>
+  <testcase name="testYearlyWillBeEventuallyTriggeredWithinOneYear[2]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
   <testcase name="testMonthlyWillBeEventuallyTriggeredWithinOneMonth[2]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
-  <testcase name="testAnnuallyWillBeEventuallyTriggeredWithinOneYear[2]" classname="hudson.scheduler.CronTabEventualityTest" time="0.001"/>
+  <testcase name="testAnnuallyWillBeEventuallyTriggeredWithinOneYear[2]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
   <testcase name="testFirstDayOfMonthWillBeEventuallyTriggeredWithinOneMonth[2]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
-  <testcase name="testHourlyWillBeEventuallyTriggeredWithinOneHour[2]" classname="hudson.scheduler.CronTabEventualityTest" time="0.001"/>
+  <testcase name="testHourlyWillBeEventuallyTriggeredWithinOneHour[2]" classname="hudson.scheduler.CronTabEventualityTest" time="0"/>
 </testsuite>

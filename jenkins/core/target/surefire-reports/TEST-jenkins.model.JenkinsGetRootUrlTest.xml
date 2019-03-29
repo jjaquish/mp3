@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="jenkins.model.JenkinsGetRootUrlTest" time="1.69" tests="6" errors="0" skipped="0" failures="0">
+<testsuite name="jenkins.model.JenkinsGetRootUrlTest" time="1.554" tests="6" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64"/>
@@ -59,10 +59,10 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase name="getConfiguredRootUrl" classname="jenkins.model.JenkinsGetRootUrlTest" time="1.558"/>
-  <testcase name="getAccessedRootUrl" classname="jenkins.model.JenkinsGetRootUrlTest" time="0.088"/>
-  <testcase name="preferConfiguredOverAccessed" classname="jenkins.model.JenkinsGetRootUrlTest" time="0.007"/>
-  <testcase name="doNotInheritProtocolWhenDispatchingRequest" classname="jenkins.model.JenkinsGetRootUrlTest" time="0.005"/>
-  <testcase name="doNotInheritProtocolWhenDispatchingRequest2" classname="jenkins.model.JenkinsGetRootUrlTest" time="0.007"/>
-  <testcase name="useForwardedProtoWhenPresent" classname="jenkins.model.JenkinsGetRootUrlTest" time="0.025"/>
+  <testcase name="getConfiguredRootUrl" classname="jenkins.model.JenkinsGetRootUrlTest" time="1.371"/>
+  <testcase name="getAccessedRootUrl" classname="jenkins.model.JenkinsGetRootUrlTest" time="0.092"/>
+  <testcase name="preferConfiguredOverAccessed" classname="jenkins.model.JenkinsGetRootUrlTest" time="0.011"/>
+  <testcase name="doNotInheritProtocolWhenDispatchingRequest" classname="jenkins.model.JenkinsGetRootUrlTest" time="0.018"/>
+  <testcase name="doNotInheritProtocolWhenDispatchingRequest2" classname="jenkins.model.JenkinsGetRootUrlTest" time="0.012"/>
+  <testcase name="useForwardedProtoWhenPresent" classname="jenkins.model.JenkinsGetRootUrlTest" time="0.05"/>
 </testsuite>

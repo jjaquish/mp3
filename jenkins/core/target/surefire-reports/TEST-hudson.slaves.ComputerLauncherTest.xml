@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="hudson.slaves.ComputerLauncherTest" time="0.028" tests="6" errors="0" skipped="0" failures="0">
+<testsuite name="hudson.slaves.ComputerLauncherTest" time="0.063" tests="6" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64"/>
@@ -59,10 +59,10 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase name="j2sdk4" classname="hudson.slaves.ComputerLauncherTest" time="0.026"/>
+  <testcase name="j2sdk4" classname="hudson.slaves.ComputerLauncherTest" time="0.062"/>
   <testcase name="openJDK7" classname="hudson.slaves.ComputerLauncherTest" time="0"/>
-  <testcase name="jdk5" classname="hudson.slaves.ComputerLauncherTest" time="0"/>
+  <testcase name="jdk5" classname="hudson.slaves.ComputerLauncherTest" time="0.001"/>
   <testcase name="jdk6" classname="hudson.slaves.ComputerLauncherTest" time="0"/>
-  <testcase name="jdk7" classname="hudson.slaves.ComputerLauncherTest" time="0.002"/>
+  <testcase name="jdk7" classname="hudson.slaves.ComputerLauncherTest" time="0"/>
   <testcase name="jdk10" classname="hudson.slaves.ComputerLauncherTest" time="0"/>
 </testsuite>

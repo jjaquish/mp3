@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="hudson.model.ResourceListTest" time="0.031" tests="12" errors="0" skipped="0" failures="0">
+<testsuite name="hudson.model.ResourceListTest" time="0.084" tests="12" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64"/>
@@ -60,15 +60,15 @@
     <property name="sun.cpu.isalist" value=""/>
   </properties>
   <testcase name="emptyLists" classname="hudson.model.ResourceListTest" time="0"/>
-  <testcase name="multiWrite1" classname="hudson.model.ResourceListTest" time="0.005"/>
-  <testcase name="multiWriteN" classname="hudson.model.ResourceListTest" time="0.004"/>
-  <testcase name="simpleRW" classname="hudson.model.ResourceListTest" time="0.002"/>
+  <testcase name="multiWrite1" classname="hudson.model.ResourceListTest" time="0.04"/>
+  <testcase name="multiWriteN" classname="hudson.model.ResourceListTest" time="0.013"/>
+  <testcase name="simpleRW" classname="hudson.model.ResourceListTest" time="0.001"/>
   <testcase name="parentChildR" classname="hudson.model.ResourceListTest" time="0"/>
-  <testcase name="parentChildW" classname="hudson.model.ResourceListTest" time="0.013"/>
+  <testcase name="parentChildW" classname="hudson.model.ResourceListTest" time="0.023"/>
   <testcase name="parentChildR3" classname="hudson.model.ResourceListTest" time="0"/>
-  <testcase name="parentChildW3" classname="hudson.model.ResourceListTest" time="0.001"/>
+  <testcase name="parentChildW3" classname="hudson.model.ResourceListTest" time="0.003"/>
   <testcase name="multiRead1" classname="hudson.model.ResourceListTest" time="0"/>
   <testcase name="multiReadN" classname="hudson.model.ResourceListTest" time="0"/>
   <testcase name="simpleR" classname="hudson.model.ResourceListTest" time="0.001"/>
-  <testcase name="simpleW" classname="hudson.model.ResourceListTest" time="0.005"/>
+  <testcase name="simpleW" classname="hudson.model.ResourceListTest" time="0.003"/>
 </testsuite>

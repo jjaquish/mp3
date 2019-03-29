@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="hudson.MarkupTextTest" time="0.001" tests="8" errors="0" skipped="0" failures="0">
+<testsuite name="hudson.MarkupTextTest" time="0.002" tests="8" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64"/>
@@ -59,12 +59,12 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase name="boundary" classname="hudson.MarkupTextTest" time="0"/>
+  <testcase name="boundary" classname="hudson.MarkupTextTest" time="0.001"/>
   <testcase name="findTokensOnSubText" classname="hudson.MarkupTextTest" time="0"/>
   <testcase name="escape" classname="hudson.MarkupTextTest" time="0"/>
-  <testcase name="adjacent" classname="hudson.MarkupTextTest" time="0"/>
+  <testcase name="adjacent" classname="hudson.MarkupTextTest" time="0.001"/>
   <testcase name="literalTextSurround" classname="hudson.MarkupTextTest" time="0"/>
   <testcase name="test1" classname="hudson.MarkupTextTest" time="0"/>
   <testcase name="subTextSubText" classname="hudson.MarkupTextTest" time="0"/>
-  <testcase name="preEscape" classname="hudson.MarkupTextTest" time="0.001"/>
+  <testcase name="preEscape" classname="hudson.MarkupTextTest" time="0"/>
 </testsuite>

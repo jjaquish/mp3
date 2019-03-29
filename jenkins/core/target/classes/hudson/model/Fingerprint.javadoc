@@ -1,4 +1,4 @@
-#Wed Mar 27 18:21:08 EDT 2019
+#Wed Mar 27 18:57:21 EDT 2019
 getHashString=\ Gets the MD5 hash string.\n
 getTimestamp=\ Gets the timestamp when this record is created.\n
 getFileName=\ The file name (like "foo.jar" without path).\n

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="hudson.util.io.TarArchiverTest" time="0.892" tests="2" errors="0" skipped="0" failures="0">
+<testsuite name="hudson.util.io.TarArchiverTest" time="1.372" tests="2" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64"/>
@@ -59,6 +59,6 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase name="brokenSymlinks" classname="hudson.util.io.TarArchiverTest" time="0.309"/>
-  <testcase name="permission" classname="hudson.util.io.TarArchiverTest" time="0.583"/>
+  <testcase name="brokenSymlinks" classname="hudson.util.io.TarArchiverTest" time="0.502"/>
+  <testcase name="permission" classname="hudson.util.io.TarArchiverTest" time="0.87"/>
 </testsuite>
