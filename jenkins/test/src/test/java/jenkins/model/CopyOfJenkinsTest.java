@@ -102,14 +102,14 @@ public class CopyOfJenkinsTest {
      * */
 
     @Test
-    public void testEmptyString() throws Exception {
+    public void testInvalidNum() throws Exception {
     	IdStrategy.CaseSensitive myCase = new IdStrategy.CaseSensitive();
-    	assertEquals("", myCase.idFromFilename(""));
+    	assertEquals("hello", myCase.idFromFilename("hello$111"));
 
     }
 
     @Test
-    public void testFName() throws Exception {
+    public void testFNameWithHex() throws Exception {
     	IdStrategy.CaseSensitive myCase = new IdStrategy.CaseSensitive();
     	assertEquals("hellos", myCase.idFromFilename("hello$0073"));
     }
