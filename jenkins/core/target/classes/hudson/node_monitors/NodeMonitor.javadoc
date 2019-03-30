@@ -1,2 +1,2 @@
-#Fri Mar 29 13:24:05 EDT 2019
+#Fri Mar 29 20:54:29 EDT 2019
 getColumnCaption=\ Returns the name of the column to be added to {@link ComputerSet} index.jelly.\n\n @return\n      null to not render a column. The convention is to use capitalization like "Foo Bar Zot".\n

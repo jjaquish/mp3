@@ -1,0 +1,2254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd-cpd>
+   <duplication lines="148" tokens="523">
+      <file line="1921"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/JenkinsRule.java"/>
+      <file line="1704"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/HudsonTestCase.java"/>
+      <codefragment><![CDATA[            form.submit(null);
+            return this;
+        }
+
+        /**
+         * Logs in to Hudson, by using the user name as the password.
+         *
+         * <p>
+         * See {@link #configureUserRealm} for how the container is set up with the user names
+         * and passwords. All the test accounts have the same user name and password.
+         */
+        public WebClient login(String username) throws Exception {
+            login(username,username);
+            return this;
+        }
+
+        /**
+         * Executes the given closure on the server, by the servlet request handling thread,
+         * in the context of an HTTP request.
+         *
+         * <p>
+         * In {@link JenkinsRule}, a thread that's executing the test code is different from the thread
+         * that carries out HTTP requests made through {@link WebClient}. But sometimes you want to
+         * make assertions and other calls with side-effect from within the request handling thread.
+         *
+         * <p>
+         * This method allows you to do just that. It is useful for testing some methods that
+         * require {@link org.kohsuke.stapler.StaplerRequest} and {@link org.kohsuke.stapler.StaplerResponse}, or getting the credential
+         * of the current user (via {@link jenkins.model.Jenkins#getAuthentication()}, and so on.
+         *
+         * @param c
+         *      The closure to be executed on the server.
+         * @return
+         *      The return value from the closure.
+         * @throws Exception
+         *      If a closure throws any exception, that exception will be carried forward.
+         */
+        public <V> V executeOnServer(final Callable<V> c) throws Exception {
+            final Exception[] t = new Exception[1];
+            final List<V> r = new ArrayList<V>(1);  // size 1 list
+
+            ClosureExecuterAction cea = jenkins.getExtensionList(RootAction.class).get(ClosureExecuterAction.class);
+            UUID id = UUID.randomUUID();
+            cea.add(id,new Runnable() {
+                public void run() {
+                    try {
+                        StaplerResponse rsp = Stapler.getCurrentResponse();
+                        rsp.setStatus(200);
+                        rsp.setContentType("text/html");
+                        r.add(c.call());
+                    } catch (Exception e) {
+                        t[0] = e;
+                    }
+                }
+            });
+            goTo("closures/?uuid="+id);
+
+            if (t[0]!=null)
+                throw t[0];
+            return r.get(0);
+        }
+
+        public HtmlPage search(String q) throws IOException, SAXException {
+            HtmlPage top = goTo("");
+            HtmlForm search = top.getFormByName("search");
+            search.getInputByName("q").setValueAttribute(q);
+            return (HtmlPage)search.submit(null);
+        }
+
+        /**
+         * Short for {@code getPage(r,"")}, to access the top page of a build.
+         */
+        public HtmlPage getPage(Run r) throws IOException, SAXException {
+            return getPage(r,"");
+        }
+
+        /**
+         * Accesses a page inside {@link Run}.
+         *
+         * @param relative
+         *      Relative URL within the build URL, like "changes". Doesn't start with '/'. Can be empty.
+         */
+        public HtmlPage getPage(Run r, String relative) throws IOException, SAXException {
+            return goTo(r.getUrl()+relative);
+        }
+
+        public HtmlPage getPage(Item item) throws IOException, SAXException {
+            return getPage(item,"");
+        }
+
+        public HtmlPage getPage(Item item, String relative) throws IOException, SAXException {
+            return goTo(item.getUrl()+relative);
+        }
+
+        public HtmlPage getPage(Node item) throws IOException, SAXException {
+            return getPage(item,"");
+        }
+
+        public HtmlPage getPage(Node item, String relative) throws IOException, SAXException {
+            return goTo(item.toComputer().getUrl()+relative);
+        }
+
+        public HtmlPage getPage(View view) throws IOException, SAXException {
+            return goTo(view.getUrl());
+        }
+
+        public HtmlPage getPage(View view, String relative) throws IOException, SAXException {
+            return goTo(view.getUrl()+relative);
+        }
+
+        /**
+         * @deprecated
+         *      This method expects a full URL. This method is marked as deprecated to warn you
+         *      that you probably should be using {@link #goTo(String)} method, which accepts
+         *      a relative path within the Hudson being tested. (IOW, if you really need to hit
+         *      a website on the internet, there's nothing wrong with using this method.)
+         */
+        @SuppressWarnings("unchecked")
+        @Override
+        public Page getPage(String url) throws IOException, FailingHttpStatusCodeException {
+            return super.getPage(url);
+        }
+
+        /**
+         * Requests an HTML page within Jenkins.
+         *
+         * @param relative
+         *      Relative path within Jenkins. Starts without '/'.
+         *      For example, "job/test/" to go to a job top page.
+         */
+        public HtmlPage goTo(String relative) throws IOException, SAXException {
+            Page p = goTo(relative, "text/html");
+            if (p instanceof HtmlPage) {
+                return (HtmlPage) p;
+            } else {
+                throw new AssertionError("Expected text/html but instead the content type was "+p.getWebResponse().getContentType());
+            }
+        }
+
+        /**
+         * Requests a page within Jenkins.
+         *
+         * @param relative
+         *      Relative path within Jenkins. Starts without '/'.
+         *      For example, "job/test/" to go to a job top page.
+         * @param expectedContentType the expected {@link WebResponse#getContentType}, or null to do no such check
+         */
+        public Page goTo(String relative, @CheckForNull String expectedContentType) throws IOException, SAXException {]]></codefragment>
+   </duplication>
+   <duplication lines="74" tokens="300">
+      <file line="2111"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/JenkinsRule.java"/>
+      <file line="1880"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/HudsonTestCase.java"/>
+      <codefragment><![CDATA[            try {
+                fail(url + " should have been rejected but produced: " + super.getPage(getContextPath() + url).getWebResponse().getContentAsString());
+            } catch (FailingHttpStatusCodeException x) {
+                assertEquals(statusCode, x.getStatusCode());
+            }
+        }
+
+        /**
+         * Returns the URL of the webapp top page.
+         * URL ends with '/'.
+         * <p>This is actually the same as {@link #getURL} and should not be confused with {@link #contextPath}.
+         */
+        public String getContextPath() throws IOException {
+            return getURL().toExternalForm();
+        }
+
+        /**
+         * Adds a security crumb to the request.
+         * Use {@link #createCrumbedUrl} instead if you intend to call {@link WebRequestSettings#setRequestBody}, typical of a POST request.
+         */
+        public WebRequestSettings addCrumb(WebRequestSettings req) {
+            NameValuePair crumb[] = { new NameValuePair() };
+
+            crumb[0].setName(jenkins.getCrumbIssuer().getDescriptor().getCrumbRequestField());
+            crumb[0].setValue(jenkins.getCrumbIssuer().getCrumb( null ));
+
+            req.setRequestParameters(Arrays.asList( crumb ));
+            return req;
+        }
+
+        /**
+         * Creates a URL with crumb parameters relative to {{@link #getContextPath()}
+         */
+        public URL createCrumbedUrl(String relativePath) throws IOException {
+            CrumbIssuer issuer = jenkins.getCrumbIssuer();
+            String crumbName = issuer.getDescriptor().getCrumbRequestField();
+            String crumb = issuer.getCrumb(null);
+
+            return new URL(getContextPath()+relativePath+"?"+crumbName+"="+crumb);
+        }
+
+        /**
+         * Makes an HTTP request, process it with the given request handler, and returns the response.
+         */
+        public HtmlPage eval(final Runnable requestHandler) throws IOException, SAXException {
+            ClosureExecuterAction cea = jenkins.getExtensionList(RootAction.class).get(ClosureExecuterAction.class);
+            UUID id = UUID.randomUUID();
+            cea.add(id,requestHandler);
+            return goTo("closures/?uuid="+id);
+        }
+
+        /**
+         * Starts an interactive JavaScript debugger, and break at the next JavaScript execution.
+         *
+         * <p>
+         * This is useful during debugging a test so that you can step execute and inspect state of JavaScript.
+         * This will launch a Swing GUI, and the method returns immediately.
+         *
+         * <p>
+         * Note that installing a debugger appears to make an execution of JavaScript substantially slower.
+         *
+         * <p>
+         * TODO: because each script block evaluation in HtmlUnit is done in a separate Rhino context,
+         * if you step over from one script block, the debugger fails to kick in on the beginning of the next script
+         * block.
+         * This makes it difficult to set a break point on arbitrary script block in the HTML page. We need to fix this
+         * by tweaking {@link org.mozilla.javascript.tools.debugger.Dim.StackFrame#onLineChange(Context, int)}.
+         */
+        public Dim interactiveJavaScriptDebugger() {
+            Global global = new Global();
+            HtmlUnitContextFactory cf = getJavaScriptEngine().getContextFactory();
+            global.init(cf);
+
+            Dim dim = org.mozilla.javascript.tools.debugger.Main.mainEmbedded(cf, global, "Rhino debugger: " + testDescription.getDisplayName());]]></codefragment>
+   </duplication>
+   <duplication lines="56" tokens="224">
+      <file line="1273"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/JenkinsRule.java"/>
+      <file line="1134"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/HudsonTestCase.java"/>
+      <codefragment><![CDATA[                            Matchers.notNullValue());
+                    wc.goTo(url); // make sure it successfully loads
+                }
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Tokenizes "foo,bar,zot,-bar" and returns "foo,zot" (the token that starts with '-' is handled as
+     * a cancellation.
+     */
+    private List<String> listProperties(String properties) {
+        List<String> props = new ArrayList<String>(Arrays.asList(properties.split(",")));
+        for (String p : props.toArray(new String[props.size()])) {
+            if (p.startsWith("-")) {
+                props.remove(p);
+                props.remove(p.substring(1));
+            }
+        }
+        return props;
+    }
+
+    /**
+     * Submits the form.
+     *
+     * Plain {@link com.gargoylesoftware.htmlunit.html.HtmlForm#submit()} doesn't work correctly due to the use of YUI in Hudson.
+     */
+    public HtmlPage submit(HtmlForm form) throws Exception {
+        return (HtmlPage) form.submit((HtmlButton) last(form.getHtmlElementsByTagName("button")));
+    }
+
+    /**
+     * Submits the form by clikcing the submit button of the given name.
+     *
+     * @param name
+     *      This corresponds to the @name of &lt;f:submit />
+     */
+    public HtmlPage submit(HtmlForm form, String name) throws Exception {
+        for( HtmlElement e : form.getHtmlElementsByTagName("button")) {
+            HtmlElement p = (HtmlElement)e.getParentNode().getParentNode();
+            if(p.getAttribute("name").equals(name)) {
+                // To make YUI event handling work, this combo seems to be necessary
+                // the click will trigger _onClick in buton-*.js, but it doesn't submit the form
+                // (a comment alluding to this behavior can be seen in submitForm method)
+                // so to complete it, submit the form later.
+                //
+                // Just doing form.submit() doesn't work either, because it doesn't do
+                // the preparation work needed to pass along the name of the button that
+                // triggered a submission (more concretely, m_oSubmitTrigger is not set.)
+                ((HtmlButton)e).click();
+                return (HtmlPage)form.submit((HtmlButton)e);
+            }
+        }
+        throw new AssertionError("No such submit button with the name "+name);
+    }]]></codefragment>
+   </duplication>
+   <duplication lines="25" tokens="198">
+      <file line="1194"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/JenkinsRule.java"/>
+      <file line="1056"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/HudsonTestCase.java"/>
+      <codefragment><![CDATA[        assertThat("There should be an object that matches XPath:" + xpath, nodes.isEmpty(), is(false));
+    }
+
+    public void assertXPathValue(DomNode page, String xpath, String expectedValue) {
+        Object node = page.getFirstByXPath(xpath);
+        assertNotNull("no node found", node);
+        assertTrue("the found object was not a Node " + xpath, node instanceof org.w3c.dom.Node);
+
+        org.w3c.dom.Node n = (org.w3c.dom.Node) node;
+        String textString = n.getTextContent();
+        assertEquals("xpath value should match for " + xpath, expectedValue, textString);
+    }
+
+    public void assertXPathValueContains(DomNode page, String xpath, String needle) {
+        Object node = page.getFirstByXPath(xpath);
+        assertNotNull("no node found", node);
+        assertTrue("the found object was not a Node " + xpath, node instanceof org.w3c.dom.Node);
+
+        org.w3c.dom.Node n = (org.w3c.dom.Node) node;
+        String textString = n.getTextContent();
+        assertTrue("needle found in haystack", textString.contains(needle));
+    }
+
+    public void assertXPathResultsContainText(DomNode page, String xpath, String needle) {
+        List<? extends Object> nodes = page.getByXPath(xpath);]]></codefragment>
+   </duplication>
+   <duplication lines="23" tokens="193">
+      <file line="114"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/model/RunParameterDefinitionTest.java"/>
+      <file line="145"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/model/RunParameterDefinitionTest.java"/>
+      <file line="176"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/model/RunParameterDefinitionTest.java"/>
+      <file line="208"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/model/RunParameterDefinitionTest.java"/>
+      <codefragment><![CDATA[    public void testALLFilter() throws Exception {
+
+        FreeStyleProject project = j.createFreeStyleProject("project");
+        FreeStyleBuild successfulBuild = project.scheduleBuild2(0).get();
+
+        project.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.UNSTABLE)));
+        FreeStyleBuild unstableBuild = project.scheduleBuild2(0).get();
+
+        project.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.FAILURE)));
+        FreeStyleBuild failedBuild = project.scheduleBuild2(0).get();
+
+        project.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.NOT_BUILT)));
+        FreeStyleBuild notBuiltBuild = project.scheduleBuild2(0).get();
+        
+        project.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.ABORTED)));
+        FreeStyleBuild abortedBuild = project.scheduleBuild2(0).get();
+
+        FreeStyleProject paramProject = j.createFreeStyleProject("paramProject");
+        ParametersDefinitionProperty pdp = 
+                new ParametersDefinitionProperty(new RunParameterDefinition("RUN", 
+                                                                             project.getName(),
+                                                                             "run description",
+                                                                             RunParameterFilter.ALL));]]></codefragment>
+   </duplication>
+   <duplication lines="52" tokens="192">
+      <file line="896"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/JenkinsRule.java"/>
+      <file line="779"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/HudsonTestCase.java"/>
+      <codefragment><![CDATA[    				createTmpDir().getPath(), "1", Node.Mode.NORMAL, labels==null?"":labels, createComputerLauncher(env), RetentionStrategy.NOOP, Collections.EMPTY_LIST);                        
+    		jenkins.addNode(slave);
+    		return slave;
+    	}
+    }
+
+    public PretendSlave createPretendSlave(FakeLauncher faker) throws Exception {
+        synchronized (jenkins) {
+            int sz = jenkins.getNodes().size();
+            PretendSlave slave = new PretendSlave("slave" + sz, createTmpDir().getPath(), "", createComputerLauncher(null), faker);
+    		jenkins.addNode(slave);
+    		return slave;
+        }
+    }
+
+    /**
+     * Creates a {@link hudson.slaves.CommandLauncher} for launching a slave locally.
+     *
+     * @param env
+     *      Environment variables to add to the slave process. Can be null.
+     */
+    public CommandLauncher createComputerLauncher(EnvVars env) throws URISyntaxException, MalformedURLException {
+        int sz = jenkins.getNodes().size();
+        return new CommandLauncher(
+                String.format("\"%s/bin/java\" %s -jar \"%s\"",
+                        System.getProperty("java.home"),
+                        SLAVE_DEBUG_PORT>0 ? " -Xdebug -Xrunjdwp:transport=dt_socket,server=y,address="+(SLAVE_DEBUG_PORT+sz): "",
+                        new File(jenkins.getJnlpJars("slave.jar").getURL().toURI()).getAbsolutePath()),
+                env);
+    }
+
+    /**
+     * Create a new slave on the local host and wait for it to come online
+     * before returning.
+     */
+    public DumbSlave createOnlineSlave() throws Exception {
+        return createOnlineSlave(null);
+    }
+
+    /**
+     * Create a new slave on the local host and wait for it to come online
+     * before returning.
+     */
+    public DumbSlave createOnlineSlave(Label l) throws Exception {
+        return createOnlineSlave(l, null);
+    }
+
+    /**
+     * Create a new slave on the local host and wait for it to come online
+     * before returning
+     */
+    @SuppressWarnings({"deprecation"})]]></codefragment>
+   </duplication>
+   <duplication lines="52" tokens="192">
+      <file line="1822"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/JenkinsRule.java"/>
+      <file line="1617"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/HudsonTestCase.java"/>
+      <codefragment><![CDATA[        throw new AssertionError("JenkinsRule " + testDescription.getDisplayName() + " is not supposed to be serialized");
+    }
+
+    /**
+     * This is to assist Groovy test clients who are incapable of instantiating the inner classes properly.
+     */
+    public WebClient createWebClient() {
+        return new WebClient();
+    }
+
+    /**
+     * Extends {@link com.gargoylesoftware.htmlunit.WebClient} and provide convenience methods
+     * for accessing Hudson.
+     */
+    public class WebClient extends com.gargoylesoftware.htmlunit.WebClient {
+        private static final long serialVersionUID = 5808915989048338267L;
+
+        public WebClient() {
+            // default is IE6, but this causes 'n.doScroll('left')' to fail in event-debug.js:1907 as HtmlUnit doesn't implement such a method,
+            // so trying something else, until we discover another problem.
+            super(BrowserVersion.FIREFOX_2);
+
+//            setJavaScriptEnabled(false);
+            setPageCreator(HudsonPageCreator.INSTANCE);
+            clients.add(this);
+            // make ajax calls run as post-action for predictable behaviors that simplify debugging
+            setAjaxController(new AjaxController() {
+                private static final long serialVersionUID = -5844060943564822678L;
+                public boolean processSynchron(HtmlPage page, WebRequestSettings settings, boolean async) {
+                    return false;
+                }
+            });
+
+            setCssErrorHandler(new ErrorHandler() {
+                final ErrorHandler defaultHandler = new DefaultCssErrorHandler();
+
+                public void warning(CSSParseException exception) throws CSSException {
+                    if (!ignore(exception))
+                        defaultHandler.warning(exception);
+                }
+
+                public void error(CSSParseException exception) throws CSSException {
+                    if (!ignore(exception))
+                        defaultHandler.error(exception);
+                }
+
+                public void fatalError(CSSParseException exception) throws CSSException {
+                    if (!ignore(exception))
+                        defaultHandler.fatalError(exception);
+                }
+
+                private boolean ignore(CSSParseException e) {]]></codefragment>
+   </duplication>
+   <duplication lines="35" tokens="192">
+      <file line="27"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/src/main/java/jenkins/mvn/FilePathGlobalSettingsProvider.java"/>
+      <file line="26"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/src/main/java/jenkins/mvn/FilePathSettingsProvider.java"/>
+      <codefragment><![CDATA[    public FilePathGlobalSettingsProvider(String path) {
+        this.path = path;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    @Override
+    public FilePath supplySettings(AbstractBuild<?, ?> build, TaskListener listener) {
+        if (StringUtils.isEmpty(path)) {
+            return null;
+        }
+
+        try {
+            EnvVars env = build.getEnvironment(listener);
+            String targetPath = Util.replaceMacro(this.path, build.getBuildVariableResolver());
+            targetPath = env.expand(targetPath);
+
+            if (IOUtils.isAbsolute(targetPath)) {
+                return new FilePath(new File(targetPath));
+            } else {
+                FilePath mrSettings = build.getModuleRoot().child(targetPath);
+                FilePath wsSettings = build.getWorkspace().child(targetPath);
+                try {
+                    if (!wsSettings.exists() && mrSettings.exists()) {
+                        wsSettings = mrSettings;
+                    }
+                } catch (Exception e) {
+                    throw new IllegalStateException("failed to find settings.xml at: " + wsSettings.getRemote());
+                }
+                return wsSettings;
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException("failed to prepare global settings.xml");]]></codefragment>
+   </duplication>
+   <duplication lines="22" tokens="191">
+      <file line="82"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/model/RunParameterDefinitionTest.java"/>
+      <file line="114"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/model/RunParameterDefinitionTest.java"/>
+      <file line="145"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/model/RunParameterDefinitionTest.java"/>
+      <file line="176"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/model/RunParameterDefinitionTest.java"/>
+      <file line="208"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/model/RunParameterDefinitionTest.java"/>
+      <codefragment><![CDATA[    public void testNULLFilter() throws Exception {
+
+        FreeStyleProject project = j.createFreeStyleProject("project");
+        FreeStyleBuild successfulBuild = project.scheduleBuild2(0).get();
+
+        project.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.UNSTABLE)));
+        FreeStyleBuild unstableBuild = project.scheduleBuild2(0).get();
+
+        project.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.FAILURE)));
+        FreeStyleBuild failedBuild = project.scheduleBuild2(0).get();
+
+        project.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.NOT_BUILT)));
+        FreeStyleBuild notBuiltBuild = project.scheduleBuild2(0).get();
+        
+        project.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.ABORTED)));
+        FreeStyleBuild abortedBuild = project.scheduleBuild2(0).get();
+
+        FreeStyleProject paramProject = j.createFreeStyleProject("paramProject");
+        ParametersDefinitionProperty pdp = 
+                new ParametersDefinitionProperty(new RunParameterDefinition("RUN", 
+                                                                             project.getName(),
+                                                                             "run description",]]></codefragment>
+   </duplication>
+   <duplication lines="20" tokens="169">
+      <file line="99"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/src/test/java/hudson/scheduler/CronTabTest.java"/>
+      <file line="121"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/src/test/java/hudson/scheduler/CronTabTest.java"/>
+      <codefragment><![CDATA[        final Calendar cal = Calendar.getInstance(new Locale("de", "de"));
+        cal.set(2011, 0, 16, 0, 0, 0); // Sunday, Jan 16th 2011, 00:00
+        final String cronStr = "0 23 * * 1-5"; // execute on weekdays @23:00
+
+        final CronTab cron = new CronTab(cronStr);
+        final Calendar next = cron.ceil(cal);
+
+        final Calendar expectedDate = Calendar.getInstance();
+        expectedDate.set(2011, 0, 17, 23, 0, 0); // Expected next: Monday, Jan 17th 2011, 23:00
+        assertEquals(expectedDate.get(Calendar.HOUR), next.get(Calendar.HOUR));
+        assertEquals(expectedDate.get(Calendar.MINUTE), next.get(Calendar.MINUTE));
+        assertEquals(expectedDate.get(Calendar.YEAR), next.get(Calendar.YEAR));
+        assertEquals(expectedDate.get(Calendar.MONTH), next.get(Calendar.MONTH));
+        assertEquals(expectedDate.get(Calendar.DAY_OF_MONTH), next.get(Calendar.DAY_OF_MONTH)); // FAILS: is Monday, Jan 10th, 23:00
+    }
+
+    /**
+     * Verifies that HUDSON-8656 never crops up again.
+     */
+    @Url("http://issues.hudson-ci.org/browse/HUDSON-8656")]]></codefragment>
+   </duplication>
+   <duplication lines="39" tokens="161">
+      <file line="2273"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/JenkinsRule.java"/>
+      <file line="2022"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/HudsonTestCase.java"/>
+      <codefragment><![CDATA[                GNUCLibrary.LIBC.unsetenv("MAVEN_DEBUG_OPTS");
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING,"Failed to cancel out MAVEN_OPTS",e);
+            }
+        }
+    }
+
+    public static class TestBuildWrapper extends BuildWrapper {
+        public Result buildResultInTearDown;
+
+        @Override
+        public Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+            return new BuildWrapper.Environment() {
+                @Override
+                public boolean tearDown(AbstractBuild build, BuildListener listener) throws IOException, InterruptedException {
+                    buildResultInTearDown = build.getResult();
+                    return true;
+                }
+            };
+        }
+
+        @Extension
+        public static class TestBuildWrapperDescriptor extends BuildWrapperDescriptor {
+            @Override
+            public boolean isApplicable(AbstractProject<?, ?> project) {
+                return true;
+            }
+
+            @Override
+            public BuildWrapper newInstance(StaplerRequest req, JSONObject formData) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public String getDisplayName() {
+                return this.getClass().getName();
+            }
+        }
+    }]]></codefragment>
+   </duplication>
+   <duplication lines="11" tokens="158">
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/CryptoConfidentialKeyTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/HMACConfidentialKeyTest.java"/>
+      <codefragment><![CDATA[  extends java.lang.Object  implements
+    groovy.lang.GroovyObject {
+@org.junit.Rule() public ConfidentialStoreRule store;
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  java.lang.Object getKey() { return null;}
+public  void setKey(java.lang.Object value) { }
+@org.junit.Test() public  void decryptGetsPlainTextBack() { }]]></codefragment>
+   </duplication>
+   <duplication lines="34" tokens="156">
+      <file line="863"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/JenkinsRule.java"/>
+      <file line="746"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/HudsonTestCase.java"/>
+      <codefragment><![CDATA[        }
+
+    }
+
+    /**
+     * Returns the URL of the webapp top page.
+     * URL ends with '/'.
+     */
+    public URL getURL() throws IOException {
+        return new URL("http://localhost:"+localPort+contextPath+"/");
+    }
+
+    public DumbSlave createSlave(EnvVars env) throws Exception {
+        return createSlave("",env);
+    }
+
+    public DumbSlave createSlave(Label l, EnvVars env) throws Exception {
+        return createSlave(l==null ? null : l.getExpression(), env);
+    }
+
+    /**
+     * Creates a slave with certain additional environment variables
+     */
+    public DumbSlave createSlave(String labels, EnvVars env) throws Exception {
+        synchronized (jenkins) {
+            int sz = jenkins.getNodes().size();
+            return createSlave("slave" + sz,labels,env);
+    	}
+    }
+
+    public DumbSlave createSlave(String nodeName, String labels, EnvVars env) throws Exception {
+        synchronized (jenkins) {
+            DumbSlave slave = new DumbSlave(nodeName, "dummy",
+    				createTmpDir().getPath(), "1", Node.Mode.NORMAL, labels==null?"":labels, createComputerLauncher(env), RetentionStrategy.NOOP, Collections.EMPTY_LIST);                        ]]></codefragment>
+   </duplication>
+   <duplication lines="34" tokens="153">
+      <file line="35"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/src/main/java/hudson/util/DualOutputStream.java"/>
+      <file line="36"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/src/main/java/hudson/util/ForkOutputStream.java"/>
+      <codefragment><![CDATA[    public DualOutputStream(OutputStream lhs, OutputStream rhs) {
+        this.lhs = lhs;
+        this.rhs = rhs;
+    }
+
+    public void write(int b) throws IOException {
+        lhs.write(b);
+        rhs.write(b);
+    }
+
+    @Override
+    public void write(byte[] b) throws IOException {
+        lhs.write(b);
+        rhs.write(b);
+    }
+
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+        lhs.write(b,off,len);
+        rhs.write(b,off,len);
+    }
+
+    @Override
+    public void flush() throws IOException {
+        lhs.flush();
+        rhs.flush();
+    }
+
+    @Override
+    public void close() throws IOException {
+        lhs.close();
+        rhs.close();
+    }
+}]]></codefragment>
+   </duplication>
+   <duplication lines="9" tokens="151">
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/ApplyButtonTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/model/BuildDiscarderTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/widgets/HistoryWidgetTest.java"/>
+      <codefragment><![CDATA[  extends java.lang.Object  implements
+    groovy.lang.GroovyObject {
+@org.junit.Rule() public org.jvnet.hudson.test.JenkinsRule j;
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@org.junit.Test() @org.jvnet.hudson.test.Issue(value="JENKINS-18436") public  void editDescription() { }]]></codefragment>
+   </duplication>
+   <duplication lines="30" tokens="150">
+      <file line="112"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-sources/antlr/hudson/model/labels/LabelExpressionLexer.java"/>
+      <file line="169"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-sources/antlr/hudson/scheduler/CrontabLexer.java"/>
+      <codefragment><![CDATA[						mATOM(true);
+						theRetToken=_returnToken;
+					}
+				else {
+					if (LA(1)==EOF_CHAR) {uponEOF(); _returnToken = makeToken(Token.EOF_TYPE);}
+				else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+				}
+				}
+				if ( _returnToken==null ) continue tryAgain; // found SKIP token
+				_ttype = _returnToken.getType();
+				_ttype = testLiteralsTable(_ttype);
+				_returnToken.setType(_ttype);
+				return _returnToken;
+			}
+			catch (RecognitionException e) {
+				throw new TokenStreamRecognitionException(e);
+			}
+		}
+		catch (CharStreamException cse) {
+			if ( cse instanceof CharStreamIOException ) {
+				throw new TokenStreamIOException(((CharStreamIOException)cse).io);
+			}
+			else {
+				throw new TokenStreamException(cse.getMessage());
+			}
+		}
+	}
+}
+
+	public final void mAND(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {]]></codefragment>
+   </duplication>
+   <duplication lines="10" tokens="146">
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/GroovyTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/EnableJobCommandTest.java"/>
+      <codefragment><![CDATA[  extends java.lang.Object  implements
+    groovy.lang.GroovyObject {
+@org.junit.Rule() public org.jvnet.hudson.test.JenkinsRule j;
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@org.junit.Test() public  void test() { }
+}]]></codefragment>
+   </duplication>
+   <duplication lines="16" tokens="146">
+      <file line="1428"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/JenkinsRule.java"/>
+      <file line="1289"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/HudsonTestCase.java"/>
+      <codefragment><![CDATA[        assertThat(types.length, is(names.length));
+        for (int i=0; i<types.length; i++) {
+            Object lv = ReflectionUtils.getPublicProperty(lhs, names[i]);
+            Object rv = ReflectionUtils.getPublicProperty(rhs, names[i]);
+
+            if (Iterable.class.isAssignableFrom(types[i])) {
+                Iterable lcol = (Iterable) lv;
+                Iterable rcol = (Iterable) rv;
+                Iterator ltr,rtr;
+                for (ltr=lcol.iterator(), rtr=rcol.iterator(); ltr.hasNext() && rtr.hasNext();) {
+                    Object litem = ltr.next();
+                    Object ritem = rtr.next();
+
+                    if (findDataBoundConstructor(litem.getClass())!=null) {
+                        assertEqualDataBoundBeans(litem,ritem);
+                    } else {]]></codefragment>
+   </duplication>
+   <duplication lines="13" tokens="141">
+      <file line="382"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/model/UserTest.java"/>
+      <file line="417"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/model/UserTest.java"/>
+      <codefragment><![CDATA[    public void testDoConfigSubmit() throws Exception {
+        GlobalMatrixAuthorizationStrategy auth = new GlobalMatrixAuthorizationStrategy();   
+        j.jenkins.setAuthorizationStrategy(auth);
+        j.jenkins.setCrumbIssuer(null);
+        HudsonPrivateSecurityRealm realm = new HudsonPrivateSecurityRealm(false);
+        j.jenkins.setSecurityRealm(realm);
+        User user = realm.createAccount("John Smith", "password");
+        User user2 = realm.createAccount("John Smith2", "password");
+        user2.save();
+        auth.add(Jenkins.ADMINISTER, user.getId());
+        auth.add(Jenkins.READ, user2.getId());
+        SecurityContextHolder.getContext().setAuthentication(user.impersonate());
+        HtmlForm form = j.createWebClient().login(user.getId(), "password").goTo(user2.getUrl() + "/configure").getFormByName("config");]]></codefragment>
+   </duplication>
+   <duplication lines="9" tokens="140">
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/model/PeepholePermalinkTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/org/jvnet/hudson/test/SleepBuilderTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/EnvironmentContributorTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractItemTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/GroovyTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/EnableJobCommandTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/SetBuildParameterCommandTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <codefragment><![CDATA[  extends java.lang.Object  implements
+    groovy.lang.GroovyObject {
+@org.junit.Rule() public org.jvnet.hudson.test.JenkinsRule j;
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@org.junit.Test() public  void basics() { }]]></codefragment>
+   </duplication>
+   <duplication lines="9" tokens="140">
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/SlaveTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractBuildTest.java"/>
+      <codefragment><![CDATA[  extends java.lang.Object  implements
+    groovy.lang.GroovyObject {
+@org.junit.Rule() public org.jvnet.hudson.test.GroovyJenkinsRule j;
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@org.junit.Test() public  void formValidation() { }]]></codefragment>
+   </duplication>
+   <duplication lines="14" tokens="139">
+      <file line="97"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/tasks/MavenTest.java"/>
+      <file line="126"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/tasks/MavenTest.java"/>
+      <codefragment><![CDATA[    @Test public void withNodeProperty() throws Exception {
+        MavenInstallation maven = j.configureDefaultMaven();
+        String mavenHome = maven.getHome();
+        String mavenHomeVar = "${VAR_MAVEN}" + mavenHome.substring(3);
+        String mavenVar = mavenHome.substring(0, 3);
+        MavenInstallation varMaven = new MavenInstallation("varMaven", mavenHomeVar, JenkinsRule.NO_PROPERTIES);
+        j.jenkins.getDescriptorByType(Maven.DescriptorImpl.class).setInstallations(maven, varMaven);
+
+        JDK jdk = j.jenkins.getJDK("default");
+        String javaHome = jdk.getHome();
+        String javaHomeVar = "${VAR_JAVA}" + javaHome.substring(3);
+        String javaVar = javaHome.substring(0, 3);
+        JDK varJDK = new JDK("varJDK", javaHomeVar);
+        j.jenkins.getJDKs().add(varJDK);]]></codefragment>
+   </duplication>
+   <duplication lines="9" tokens="138">
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/ApplyButtonTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/model/BuildDiscarderTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/model/PeepholePermalinkTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/org/jvnet/hudson/test/SleepBuilderTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/EnvironmentContributorTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractItemTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/widgets/HistoryWidgetTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/GroovyTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/EnableJobCommandTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/SetBuildParameterCommandTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <codefragment><![CDATA[  extends java.lang.Object  implements
+    groovy.lang.GroovyObject {
+@org.junit.Rule() public org.jvnet.hudson.test.JenkinsRule j;
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@org.junit.Test() @org.jvnet.hudson.test.Issue(value="JENKINS-18436") public  void editDescription() { }]]></codefragment>
+   </duplication>
+   <duplication lines="9" tokens="135">
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/ApplyButtonTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/model/BuildDiscarderTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/model/PeepholePermalinkTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/org/jvnet/hudson/test/SleepBuilderTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/EnvironmentContributorTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractItemTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/security/TokenBasedRememberMeServices2Test.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/widgets/HistoryWidgetTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/GroovyTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/EnableJobCommandTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/SetBuildParameterCommandTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <codefragment><![CDATA[  extends java.lang.Object  implements
+    groovy.lang.GroovyObject {
+@org.junit.Rule() public org.jvnet.hudson.test.JenkinsRule j;
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@org.junit.Test() @org.jvnet.hudson.test.Issue(value="JENKINS-18436") public  void editDescription() { }]]></codefragment>
+   </duplication>
+   <duplication lines="9" tokens="134">
+      <file line="23"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="56"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <codefragment><![CDATA[  extends hudson.model.Descriptor<hudson.RelativePathTest>  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@java.lang.Override() public  java.lang.String getDisplayName() { return (java.lang.String)null;}
+}]]></codefragment>
+   </duplication>
+   <duplication lines="9" tokens="131">
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/TextAreaTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/bugs/Jenkins19124Test.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/CLIActionTest.java"/>
+      <codefragment><![CDATA[  extends java.lang.Object  implements
+    groovy.lang.GroovyObject {
+@org.junit.Rule() public org.jvnet.hudson.test.JenkinsRule j;
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  lib.form.TextAreaTest.TestBuilder.DescriptorImpl getD() { return (lib.form.TextAreaTest.TestBuilder.DescriptorImpl)null;}]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="130">
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/TextAreaTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/ApplyButtonTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/model/BuildDiscarderTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/model/PeepholePermalinkTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/bugs/Jenkins19124Test.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/org/jvnet/hudson/test/SleepBuilderTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/EnvironmentContributorTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractItemTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/security/TokenBasedRememberMeServices2Test.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/widgets/HistoryWidgetTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/GroovyTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/EnableJobCommandTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/CLIActionTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/SetBuildParameterCommandTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <codefragment><![CDATA[  extends java.lang.Object  implements
+    groovy.lang.GroovyObject {
+@org.junit.Rule() public org.jvnet.hudson.test.JenkinsRule j;
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }]]></codefragment>
+   </duplication>
+   <duplication lines="25" tokens="127">
+      <file line="1108"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/JenkinsRule.java"/>
+      <file line="995"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/HudsonTestCase.java"/>
+      <codefragment><![CDATA[        assertThat("build was actually scheduled", r, Matchers.notNullValue());
+        return assertBuildStatusSuccess(r.get());
+    }
+
+    public <J extends AbstractProject<J,R>,R extends AbstractBuild<J,R>> R buildAndAssertSuccess(J job) throws Exception {
+        return assertBuildStatusSuccess(job.scheduleBuild2(0));
+    }
+
+    /**
+     * Avoids need for cumbersome {@code this.<J,R>buildAndAssertSuccess(...)} type hints under JDK 7 javac (and supposedly also IntelliJ).
+     */
+    public FreeStyleBuild buildAndAssertSuccess(FreeStyleProject job) throws Exception {
+        return assertBuildStatusSuccess(job.scheduleBuild2(0));
+    }
+    public MavenModuleSetBuild buildAndAssertSuccess(MavenModuleSet job) throws Exception {
+        return assertBuildStatusSuccess(job.scheduleBuild2(0));
+    }
+    public MavenBuild buildAndAssertSuccess(MavenModule job) throws Exception {
+        return assertBuildStatusSuccess(job.scheduleBuild2(0));
+    }
+
+    /**
+     * Asserts that the console output of the build contains the given substring.
+     */
+    public void assertLogContains(String substring, Run run) throws Exception {]]></codefragment>
+   </duplication>
+   <duplication lines="16" tokens="126">
+      <file line="61"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/model/FreeStyleProjectTest.java"/>
+      <file line="114"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/model/FreeStyleProjectTest.java"/>
+      <codefragment><![CDATA[        FreeStyleProject project = j.createFreeStyleProject();
+        Shell shell = new Shell("echo hello");
+        project.getBuildersList().add(shell);
+
+        // emulate the user behavior
+        WebClient webClient = j.createWebClient();
+        HtmlPage page = webClient.getPage(project,"configure");
+
+        HtmlForm form = page.getFormByName("config");
+        j.submit(form);
+
+        List<Builder> builders = project.getBuilders();
+        assertEquals(1,builders.size());
+        assertEquals(Shell.class,builders.get(0).getClass());
+        assertEquals("echo hello",((Shell)builders.get(0)).getCommand().trim());
+        assertTrue(builders.get(0)!=shell);]]></codefragment>
+   </duplication>
+   <duplication lines="21" tokens="126">
+      <file line="1057"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/JenkinsRule.java"/>
+      <file line="944"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/HudsonTestCase.java"/>
+      <codefragment><![CDATA[    public <V extends View> V configRoundtrip(V view) throws Exception {
+        submit(createWebClient().getPage(view, "configure").getFormByName("viewConfig"));
+        return view;
+    }
+
+
+    /**
+     * Asserts that the outcome of the build is a specific outcome.
+     */
+    public <R extends Run> R assertBuildStatus(Result status, R r) throws Exception {
+        if(status==r.getResult())
+            return r;
+
+        // dump the build output in failure message
+        String msg = "unexpected build status; build log was:\n------\n" + getLog(r) + "\n------\n";
+        if(r instanceof MatrixBuild) {
+            MatrixBuild mb = (MatrixBuild)r;
+            for (MatrixRun mr : mb.getRuns()) {
+                msg+="--- "+mr.getParent().getCombination()+" ---\n"+getLog(mr)+"\n------\n";
+            }
+        }]]></codefragment>
+   </duplication>
+   <duplication lines="15" tokens="125">
+      <file line="273"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/jenkins/model/JenkinsTest.java"/>
+      <file line="304"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/jenkins/model/JenkinsTest.java"/>
+      <codefragment><![CDATA[    public void testDoScript() throws Exception {
+        j.jenkins.setSecurityRealm(new LegacySecurityRealm());
+        GlobalMatrixAuthorizationStrategy gmas = new GlobalMatrixAuthorizationStrategy() {
+            @Override public boolean hasPermission(String sid, Permission p) {
+                return p == Jenkins.RUN_SCRIPTS ? hasExplicitPermission(sid, p) : super.hasPermission(sid, p);
+            }
+        };
+        gmas.add(Jenkins.ADMINISTER, "alice");
+        gmas.add(Jenkins.RUN_SCRIPTS, "alice");
+        gmas.add(Jenkins.READ, "bob");
+        gmas.add(Jenkins.ADMINISTER, "charlie");
+        j.jenkins.setAuthorizationStrategy(gmas);
+        WebClient wc = j.createWebClient();
+        wc.login("alice");
+        wc.goTo("script");]]></codefragment>
+   </duplication>
+   <duplication lines="14" tokens="125">
+      <file line="624"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/model/ProjectTest.java"/>
+      <file line="656"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/model/ProjectTest.java"/>
+      <codefragment><![CDATA[            project.doDisable();
+            fail("User should not have permission to build project");
+        }
+        catch(Exception e){
+            if(!(e.getClass().isAssignableFrom(AccessDeniedException2.class))){
+               fail("AccessDeniedException should be thrown.");
+            }
+        } 
+        auth.add(Job.READ, user.getId());
+        auth.add(Job.CONFIGURE, user.getId());
+        auth.add(Jenkins.READ, user.getId());
+        List<HtmlForm> forms = j.createWebClient().login(user.getId(), "password").goTo(project.getUrl()).getForms();
+        for(HtmlForm form:forms){
+            if("disable".equals(form.getAttribute("action"))){]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="122">
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/CryptoConfidentialKeyTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/HMACConfidentialKeyTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/HexStringConfidentialKeyTest.java"/>
+      <codefragment><![CDATA[  extends java.lang.Object  implements
+    groovy.lang.GroovyObject {
+@org.junit.Rule() public ConfidentialStoreRule store;
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="119">
+      <file line="25"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/bugs/Jenkins19124Test.java"/>
+      <file line="41"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/bugs/Jenkins19124Test.java"/>
+      <codefragment><![CDATA[public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  java.lang.String getAlpha() { return (java.lang.String)null;}
+public  java.lang.String getBravo() { return (java.lang.String)null;}]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="117">
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/DefaultConfidentialStoreTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/util/AtmostOneTaskExecutorTest.java"/>
+      <codefragment><![CDATA[  extends java.lang.Object  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  java.lang.Object getTmp() { return null;}]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="115">
+      <file line="21"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/EnvironmentContributorTest.java"/>
+      <file line="37"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/util/BootFailureTest.java"/>
+      <codefragment><![CDATA[  extends hudson.model.EnvironmentContributor  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@java.lang.Override() public  void buildEnvironmentFor(hudson.model.Job j, hudson.EnvVars envs, hudson.model.TaskListener listener) { }]]></codefragment>
+   </duplication>
+   <duplication lines="16" tokens="115">
+      <file line="83"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/cli/ComputerStateTest.java"/>
+      <file line="102"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/cli/ComputerStateTest.java"/>
+      <codefragment><![CDATA[        CLICommandInvoker command = new CLICommandInvoker(j, "disconnect-node");
+
+        Slave slave = j.createOnlineSlave();
+        assertTrue(slave.toComputer().isOnline());
+
+        Result result = command.authorizedTo(Jenkins.READ, Computer.DISCONNECT)
+                .invokeWithArgs(slave.getNodeName(), "-m", "Custom cause message")
+        ;
+
+        assertThat(result, succeededSilently());
+        assertTrue(slave.toComputer().isOffline());
+
+        UserCause cause = (UserCause) slave.toComputer().getOfflineCause();
+        assertThat(cause.toString(), endsWith("Custom cause message"));
+        assertThat(cause.getUser(), equalTo(command.user()));
+    }]]></codefragment>
+   </duplication>
+   <duplication lines="19" tokens="115">
+      <file line="1448"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/JenkinsRule.java"/>
+      <file line="1308"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/HudsonTestCase.java"/>
+      <codefragment><![CDATA[                        is(false));
+            } else
+            if (findDataBoundConstructor(types[i])!=null || (lv!=null && findDataBoundConstructor(lv.getClass())!=null) || (rv!=null && findDataBoundConstructor(rv.getClass())!=null)) {
+                // recurse into nested databound objects
+                assertEqualDataBoundBeans(lv,rv);
+            } else {
+                primitiveProperties.add(names[i]);
+            }
+        }
+
+        // compare shallow primitive properties
+        if (!primitiveProperties.isEmpty())
+            assertEqualBeans(lhs,rhs,Util.join(primitiveProperties,","));
+    }
+
+    /**
+     * Makes sure that two collections are identical via {@link #assertEqualDataBoundBeans(Object, Object)}
+     */
+    public void assertEqualDataBoundBeans(List<?> lhs, List<?> rhs) throws Exception {]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="114">
+      <file line="23"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="21"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/EnvironmentContributorTest.java"/>
+      <file line="26"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractBuildTest.java"/>
+      <file line="37"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/util/BootFailureTest.java"/>
+      <file line="56"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <codefragment><![CDATA[  extends hudson.model.Descriptor<hudson.RelativePathTest>  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@java.lang.Override() public  java.lang.String getDisplayName() { return (java.lang.String)null;}]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="114">
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/util/TextFileTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/DefaultConfidentialStoreTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/util/AtmostOneTaskExecutorTest.java"/>
+      <codefragment><![CDATA[  extends java.lang.Object  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  java.util.List<java.io.File> getFiles() { return (java.util.List)null;}]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="113">
+      <file line="12"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="34"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <codefragment><![CDATA[    hudson.model.Describable<hudson.RelativePathTest>,    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@org.jvnet.hudson.test.Issue(value="JENKINS-18776") public  void testRelativePath() { }]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="113">
+      <file line="23"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="21"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/EnvironmentContributorTest.java"/>
+      <file line="26"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractBuildTest.java"/>
+      <file line="24"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/security/TokenBasedRememberMeServices2Test.java"/>
+      <file line="37"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/util/BootFailureTest.java"/>
+      <file line="56"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <codefragment><![CDATA[  extends hudson.model.Descriptor<hudson.RelativePathTest>  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@java.lang.Override() public  java.lang.String getDisplayName() { return (java.lang.String)null;}]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="112">
+      <file line="33"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="41"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <codefragment><![CDATA[  extends hudson.model.AbstractDescribableImpl<hudson.RelativePathTest.Model>  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="112">
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/util/TextFileTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/DefaultConfidentialStoreTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/util/AtmostOneTaskExecutorTest.java"/>
+      <file line="26"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/hudson/util/SecretTest.java"/>
+      <codefragment><![CDATA[  extends java.lang.Object  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  java.util.List<java.io.File> getFiles() { return (java.util.List)null;}]]></codefragment>
+   </duplication>
+   <duplication lines="26" tokens="112">
+      <file line="947"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/JenkinsRule.java"/>
+      <file line="830"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/main/java/org/jvnet/hudson/test/HudsonTestCase.java"/>
+      <codefragment><![CDATA[    @SuppressWarnings({"deprecation"})
+    public DumbSlave createOnlineSlave(Label l, EnvVars env) throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        ComputerListener waiter = new ComputerListener() {
+                                            @Override
+                                            public void onOnline(Computer C, TaskListener t) {
+                                                latch.countDown();
+                                                unregister();
+                                            }
+                                        };
+        waiter.register();
+
+        DumbSlave s = createSlave(l, env);
+        latch.await();
+
+        return s;
+    }
+
+    /**
+     * Blocks until the ENTER key is hit.
+     * This is useful during debugging a test so that one can inspect the state of Hudson through the web browser.
+     */
+    public void interactiveBreak() throws Exception {
+        System.out.println("Jenkins is running at http://localhost:"+localPort+"/");
+        new BufferedReader(new InputStreamReader(System.in)).readLine();
+    }]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="111">
+      <file line="35"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/TextAreaTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/DefaultConfidentialStoreTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/util/AtmostOneTaskExecutorTest.java"/>
+      <codefragment><![CDATA[  extends hudson.tasks.BuildStepDescriptor<hudson.tasks.Builder>  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  java.lang.Object getText1() { return null;}]]></codefragment>
+   </duplication>
+   <duplication lines="22" tokens="111">
+      <file line="1459"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/src/main/java/hudson/model/Job.java"/>
+      <file line="1240"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/src/main/java/hudson/model/Computer.java"/>
+      <codefragment><![CDATA[    public void doRssAll(StaplerRequest req, StaplerResponse rsp)
+            throws IOException, ServletException {
+        rss(req, rsp, " all builds", getBuilds());
+    }
+
+    public void doRssFailed(StaplerRequest req, StaplerResponse rsp)
+            throws IOException, ServletException {
+        rss(req, rsp, " failed builds", getBuilds().failureOnly());
+    }
+
+    private void rss(StaplerRequest req, StaplerResponse rsp, String suffix,
+            RunList runs) throws IOException, ServletException {
+        RSS.forwardToRss(getDisplayName() + suffix, getUrl(), runs.newBuilds(),
+                Run.FEED_ADAPTER, req, rsp);
+    }
+
+    /**
+     * Returns the {@link ACL} for this object.
+     * We need to override the identical method in AbstractItem because we won't
+     * call getACL(Job) otherwise (single dispatch)
+     */
+    @Override]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="110">
+      <file line="35"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/TextAreaTest.java"/>
+      <file line="23"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/bugs/Jenkins19124Test.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/DefaultConfidentialStoreTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/util/AtmostOneTaskExecutorTest.java"/>
+      <codefragment><![CDATA[  extends hudson.tasks.BuildStepDescriptor<hudson.tasks.Builder>  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  java.lang.Object getText1() { return null;}]]></codefragment>
+   </duplication>
+   <duplication lines="32" tokens="110">
+      <file line="214"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/src/main/java/jenkins/model/lazy/BuildReferenceMapAdapter.java"/>
+      <file line="319"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/src/main/java/jenkins/model/lazy/BuildReferenceMapAdapter.java"/>
+      <codefragment><![CDATA[            for (R r : c) {
+                b |= add(r);
+            }
+            return b;
+        }
+
+        public boolean removeAll(Collection<?> c) {
+            boolean b=false;
+            for (Object o : c) {
+                b|=remove(o);
+            }
+            return b;
+        }
+
+        public boolean retainAll(Collection<?> c) {
+            // TODO: to properly pass this onto core, we need to wrap o into BuildReference but also needs to figure out ID.
+            throw new UnsupportedOperationException();
+        }
+
+        public void clear() {
+            core.clear();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return core.equals(o);
+        }
+
+        @Override
+        public int hashCode() {
+            return core.hashCode();
+        }]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="109">
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/model/PeepholePermalinkTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/org/jvnet/hudson/test/SleepBuilderTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/SlaveTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/EnvironmentContributorTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractBuildTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractItemTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/GroovyTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/EnableJobCommandTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/SetBuildParameterCommandTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <codefragment><![CDATA[@org.junit.Rule() public org.jvnet.hudson.test.JenkinsRule j;
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@org.junit.Test() public  void basics() { }]]></codefragment>
+   </duplication>
+   <duplication lines="13" tokens="109">
+      <file line="43"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/jenkins/model/lazy/LazyBuildMixInTest.java"/>
+      <file line="65"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/jenkins/model/lazy/LazyBuildMixInTest.java"/>
+      <codefragment><![CDATA[    @Test public void dropLinksAfterGC() throws Exception {
+        RunListener.all().clear();  // see commit message for the discussion
+
+        FreeStyleProject p = r.createFreeStyleProject();
+        FreeStyleBuild b1 = r.buildAndAssertSuccess(p);
+        FreeStyleBuild b2 = r.buildAndAssertSuccess(p);
+        FreeStyleBuild b3 = r.buildAndAssertSuccess(p);
+        assertEquals(b2, b1.getNextBuild());
+        assertEquals(b3, b2.getNextBuild());
+        assertEquals(null, b3.getNextBuild());
+        assertEquals(null, b1.getPreviousBuild());
+        assertEquals(b1, b2.getPreviousBuild());
+        assertEquals(b2, b3.getPreviousBuild());]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="108">
+      <file line="35"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/TextAreaTest.java"/>
+      <file line="23"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/bugs/Jenkins19124Test.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/util/TextFileTest.java"/>
+      <codefragment><![CDATA[  extends hudson.tasks.BuildStepDescriptor<hudson.tasks.Builder>  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  java.lang.Object getText1() { return null;}]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="108">
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/model/PeepholePermalinkTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/org/jvnet/hudson/test/SleepBuilderTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/SlaveTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/EnvironmentContributorTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractBuildTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractItemTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/GroovyTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/EnableJobCommandTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/SetBuildParameterCommandTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/HexStringConfidentialKeyTest.java"/>
+      <file line="16"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/hudson/util/SecretRewriterTest.java"/>
+      <file line="15"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/hudson/util/SecretTest.java"/>
+      <codefragment><![CDATA[public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@org.junit.Test() public  void basics() { }]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="108">
+      <file line="24"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="22"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/EnvironmentContributorTest.java"/>
+      <file line="27"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractBuildTest.java"/>
+      <file line="36"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/security/TokenBasedRememberMeServices2Test.java"/>
+      <file line="38"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/util/BootFailureTest.java"/>
+      <file line="57"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <codefragment><![CDATA[    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@java.lang.Override() public  java.lang.String getDisplayName() { return (java.lang.String)null;}]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="107">
+      <file line="35"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/TextAreaTest.java"/>
+      <file line="41"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <codefragment><![CDATA[  extends hudson.tasks.BuildStepDescriptor<hudson.tasks.Builder>  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  java.lang.Object getText1() { return null;}]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="107">
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/ApplyButtonTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/model/BuildDiscarderTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/SlaveTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractBuildTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/widgets/HistoryWidgetTest.java"/>
+      <codefragment><![CDATA[@org.junit.Rule() public org.jvnet.hudson.test.JenkinsRule j;
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@org.junit.Test() @org.jvnet.hudson.test.Issue(value="JENKINS-18436") public  void editDescription() { }]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="107">
+      <file line="23"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="33"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <codefragment><![CDATA[  extends hudson.model.Descriptor<hudson.RelativePathTest>  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@java.lang.Override() public  java.lang.String getDisplayName() { return (java.lang.String)null;}]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="107">
+      <file line="25"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="23"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/EnvironmentContributorTest.java"/>
+      <file line="28"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractBuildTest.java"/>
+      <file line="37"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/security/TokenBasedRememberMeServices2Test.java"/>
+      <file line="39"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/util/BootFailureTest.java"/>
+      <file line="47"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <file line="58"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <codefragment><![CDATA[public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@java.lang.Override() public  java.lang.String getDisplayName() { return (java.lang.String)null;}]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="107">
+      <file line="41"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="31"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <codefragment><![CDATA[  extends hudson.model.Descriptor<hudson.RelativePathTest.Model>  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  boolean getTouched() { return false;}]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="107">
+      <file line="25"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/security/TokenBasedRememberMeServices2Test.java"/>
+      <file line="36"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/security/TokenBasedRememberMeServices2Test.java"/>
+      <codefragment><![CDATA[    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@java.lang.Override() protected  org.acegisecurity.userdetails.UserDetails authenticate(java.lang.String username, java.lang.String password)throws org.acegisecurity.AuthenticationException { return (org.acegisecurity.userdetails.UserDetails)null;}]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="106">
+      <file line="35"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/TextAreaTest.java"/>
+      <file line="23"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="33"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="41"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <codefragment><![CDATA[  extends hudson.tasks.BuildStepDescriptor<hudson.tasks.Builder>  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="106">
+      <file line="35"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/TextAreaTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractProjectTest.java"/>
+      <file line="31"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <file line="26"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/hudson/util/SecretTest.java"/>
+      <codefragment><![CDATA[  extends hudson.tasks.BuildStepDescriptor<hudson.tasks.Builder>  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  java.lang.Object getText1() { return null;}]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="106">
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/ApplyButtonTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/model/BuildDiscarderTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/widgets/HistoryWidgetTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/HexStringConfidentialKeyTest.java"/>
+      <file line="16"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/hudson/util/SecretRewriterTest.java"/>
+      <file line="15"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/hudson/util/SecretTest.java"/>
+      <codefragment><![CDATA[public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@org.junit.Test() @org.jvnet.hudson.test.Issue(value="JENKINS-18436") public  void editDescription() { }]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="106">
+      <file line="23"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/bugs/Jenkins19124Test.java"/>
+      <file line="41"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/util/TextFileTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/DefaultConfidentialStoreTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/util/AtmostOneTaskExecutorTest.java"/>
+      <codefragment><![CDATA[  extends hudson.tasks.Builder  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  java.lang.String getAlpha() { return (java.lang.String)null;}]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="106">
+      <file line="33"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="21"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/EnvironmentContributorTest.java"/>
+      <file line="26"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractBuildTest.java"/>
+      <file line="24"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/security/TokenBasedRememberMeServices2Test.java"/>
+      <file line="37"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/util/BootFailureTest.java"/>
+      <file line="56"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <codefragment><![CDATA[  extends hudson.model.AbstractDescribableImpl<hudson.RelativePathTest.Model>  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@org.jvnet.hudson.test.TestExtension() public static class DescriptorImpl]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="106">
+      <file line="26"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/security/TokenBasedRememberMeServices2Test.java"/>
+      <file line="47"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <codefragment><![CDATA[public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@java.lang.Override() protected  org.acegisecurity.userdetails.UserDetails authenticate(java.lang.String username, java.lang.String password)throws org.acegisecurity.AuthenticationException { return (org.acegisecurity.userdetails.UserDetails)null;}]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="105">
+      <file line="26"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/TextAreaTest.java"/>
+      <file line="40"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/bugs/Jenkins19124Test.java"/>
+      <codefragment><![CDATA[() {}
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  java.lang.String getText1() { return (java.lang.String)null;}]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="105">
+      <file line="35"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/TextAreaTest.java"/>
+      <file line="41"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="21"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/EnvironmentContributorTest.java"/>
+      <file line="26"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractBuildTest.java"/>
+      <file line="24"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/security/TokenBasedRememberMeServices2Test.java"/>
+      <file line="28"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/util/BootFailureTest.java"/>
+      <file line="37"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/util/BootFailureTest.java"/>
+      <file line="56"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <codefragment><![CDATA[  extends hudson.tasks.BuildStepDescriptor<hudson.tasks.Builder>  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="105">
+      <file line="23"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/bugs/Jenkins19124Test.java"/>
+      <file line="23"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="33"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractProjectTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/util/TextFileTest.java"/>
+      <file line="31"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/DefaultConfidentialStoreTest.java"/>
+      <file line="11"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/util/AtmostOneTaskExecutorTest.java"/>
+      <file line="26"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/hudson/util/SecretTest.java"/>
+      <codefragment><![CDATA[  extends hudson.tasks.Builder  implements
+    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="105">
+      <file line="12"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="24"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="22"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/EnvironmentContributorTest.java"/>
+      <file line="27"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractBuildTest.java"/>
+      <file line="25"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/security/TokenBasedRememberMeServices2Test.java"/>
+      <file line="38"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/util/BootFailureTest.java"/>
+      <file line="57"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <codefragment><![CDATA[    hudson.model.Describable<hudson.RelativePathTest>,    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@org.jvnet.hudson.test.Issue(value="JENKINS-18776") public  void testRelativePath() { }]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="104">
+      <file line="27"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/TextAreaTest.java"/>
+      <file line="25"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/bugs/Jenkins19124Test.java"/>
+      <codefragment><![CDATA[public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  java.lang.String getText1() { return (java.lang.String)null;}]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="104">
+      <file line="36"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/TextAreaTest.java"/>
+      <file line="24"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/bugs/Jenkins19124Test.java"/>
+      <file line="12"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="42"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractProjectTest.java"/>
+      <file line="29"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/util/BootFailureTest.java"/>
+      <file line="12"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/util/TextFileTest.java"/>
+      <file line="32"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <file line="12"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/DefaultConfidentialStoreTest.java"/>
+      <file line="12"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/util/AtmostOneTaskExecutorTest.java"/>
+      <file line="27"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/hudson/util/SecretTest.java"/>
+      <codefragment><![CDATA[    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="104">
+      <file line="37"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/TextAreaTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/DefaultConfidentialStoreTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/CryptoConfidentialKeyTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/HMACConfidentialKeyTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/util/AtmostOneTaskExecutorTest.java"/>
+      <codefragment><![CDATA[public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  java.lang.Object getText1() { return null;}]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="104">
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/SlaveTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractBuildTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/security/TokenBasedRememberMeServices2Test.java"/>
+      <codefragment><![CDATA[@org.junit.Rule() public org.jvnet.hudson.test.GroovyJenkinsRule j;
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@org.junit.Test() public  void formValidation() { }]]></codefragment>
+   </duplication>
+   <duplication lines="31" tokens="104">
+      <file line="458"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/src/main/java/hudson/util/FormValidation.java"/>
+      <file line="258"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/src/main/java/hudson/util/FormFieldValidator.java"/>
+      <codefragment><![CDATA[        protected BufferedReader open(URL url) throws IOException {
+            // use HTTP content type to find out the charset.
+            URLConnection con = ProxyConfiguration.open(url);
+            if (con == null) { // TODO is this even permitted by URL.openConnection?
+                throw new IOException(url.toExternalForm());
+            }
+            return new BufferedReader(
+                new InputStreamReader(con.getInputStream(),getCharset(con)));
+        }
+
+        /**
+         * Finds the string literal from the given reader.
+         * @return
+         *      true if found, false otherwise.
+         */
+        protected boolean findText(BufferedReader in, String literal) throws IOException {
+            String line;
+            while((line=in.readLine())!=null)
+                if(line.indexOf(literal)!=-1)
+                    return true;
+            return false;
+        }
+
+        /**
+         * Calls the {@link FormValidation#error(String)} method with a reasonable error message.
+         * Use this method when the {@link #open(URL)} or {@link #findText(BufferedReader, String)} fails.
+         *
+         * @param url
+         *      Pass in the URL that was connected. Used for error diagnosis.
+         */
+        protected FormValidation handleIOException(String url, IOException e) throws IOException, ServletException {]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="103">
+      <file line="27"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/TextAreaTest.java"/>
+      <file line="37"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/TextAreaTest.java"/>
+      <file line="25"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/bugs/Jenkins19124Test.java"/>
+      <file line="41"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/bugs/Jenkins19124Test.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/DefaultConfidentialStoreTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/CryptoConfidentialKeyTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/HMACConfidentialKeyTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/util/AtmostOneTaskExecutorTest.java"/>
+      <codefragment><![CDATA[public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  java.lang.String getText1() { return (java.lang.String)null;}]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="103">
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/security/TokenBasedRememberMeServices2Test.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/HexStringConfidentialKeyTest.java"/>
+      <file line="16"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/hudson/util/SecretRewriterTest.java"/>
+      <file line="15"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/hudson/util/SecretTest.java"/>
+      <codefragment><![CDATA[public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@org.junit.Before() public  void setUp() { }]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="103">
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/util/TextFileTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/CLIActionTest.java"/>
+      <codefragment><![CDATA[public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  java.util.List<java.io.File> getFiles() { return (java.util.List)null;}]]></codefragment>
+   </duplication>
+   <duplication lines="18" tokens="103">
+      <file line="351"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/src/main/java/hudson/util/FormValidation.java"/>
+      <file line="542"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/src/main/java/hudson/util/FormFieldValidator.java"/>
+      <codefragment><![CDATA[        String path = EnvVars.masterEnvVars.get("PATH");
+        String tokenizedPath = "";
+        String delimiter = null;
+        if(path!=null) {
+            for (String _dir : Util.tokenize(path.replace("\\", "\\\\"),File.pathSeparator)) {
+                if (delimiter == null) {
+                  delimiter = ", ";
+                }
+                else {
+                  tokenizedPath += delimiter;
+                }
+
+                tokenizedPath += _dir.replace('\\', '/');
+
+                File dir = new File(_dir);
+
+                File f = new File(dir,exe);
+                if(f.exists())  return exeValidator.validate(f);]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="102">
+      <file line="26"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/TextAreaTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-sources/groovy-stubs/jenkins/util/groovy/AbstractGroovyViewModule.java"/>
+      <codefragment><![CDATA[() {}
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  java.lang.String getText1() { return (java.lang.String)null;}]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="102">
+      <file line="39"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/bugs/Jenkins19124Test.java"/>
+      <file line="45"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <codefragment><![CDATA[super ((java.lang.Class)null);
+}
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="101">
+      <file line="26"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/TextAreaTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-sources/groovy-stubs/jenkins/util/groovy/AbstractGroovyViewModule.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-sources/groovy-stubs/hudson/util/LoadMonitorImpl.java"/>
+      <codefragment><![CDATA[() {}
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="101">
+      <file line="27"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/TextAreaTest.java"/>
+      <file line="37"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/TextAreaTest.java"/>
+      <file line="25"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/bugs/Jenkins19124Test.java"/>
+      <file line="41"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/bugs/Jenkins19124Test.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/util/TextFileTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/CLIActionTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/DefaultConfidentialStoreTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/CryptoConfidentialKeyTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/HMACConfidentialKeyTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/util/AtmostOneTaskExecutorTest.java"/>
+      <codefragment><![CDATA[public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  java.lang.String getText1() { return (java.lang.String)null;}]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="101">
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/lib/form/ApplyButtonTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/model/BuildDiscarderTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/model/PeepholePermalinkTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/org/jvnet/hudson/test/SleepBuilderTest.java"/>
+      <file line="13"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="35"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/SlaveTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/EnvironmentContributorTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractBuildTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/model/AbstractItemTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/security/TokenBasedRememberMeServices2Test.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/widgets/HistoryWidgetTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/GroovyTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/EnableJobCommandTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/SetBuildParameterCommandTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/cli/BuildCommandTest.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/jenkins/security/HexStringConfidentialKeyTest.java"/>
+      <file line="16"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/hudson/util/SecretRewriterTest.java"/>
+      <file line="15"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-test-sources/groovy-stubs/hudson/util/SecretTest.java"/>
+      <codefragment><![CDATA[public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@org.junit.Test() @org.jvnet.hudson.test.Issue(value="JENKINS-18436") public  void editDescription() { }]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="100">
+      <file line="40"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/jenkins/bugs/Jenkins19124Test.java"/>
+      <file line="14"
+            path="/home/jtja234/Desktop/mp3/jenkins/core/target/generated-sources/groovy-stubs/jenkins/util/groovy/AbstractGroovyViewModule.java"/>
+      <codefragment><![CDATA[}
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+public  java.lang.String getAlpha() { return (java.lang.String)null;}]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="100">
+      <file line="12"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="34"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/RelativePathTest.java"/>
+      <file line="36"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/target/generated-test-sources/groovy-stubs/hudson/security/TokenBasedRememberMeServices2Test.java"/>
+      <codefragment><![CDATA[    hudson.model.Describable<hudson.RelativePathTest>,    groovy.lang.GroovyObject {
+public  groovy.lang.MetaClass getMetaClass() { return (groovy.lang.MetaClass)null;}
+public  void setMetaClass(groovy.lang.MetaClass mc) { }
+public  java.lang.Object invokeMethod(java.lang.String method, java.lang.Object arguments) { return null;}
+public  java.lang.Object getProperty(java.lang.String property) { return null;}
+public  void setProperty(java.lang.String property, java.lang.Object value) { }
+@org.jvnet.hudson.test.Issue(value="JENKINS-18776") public  void testRelativePath() { }]]></codefragment>
+   </duplication>
+   <duplication lines="13" tokens="100">
+      <file line="129"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/model/RunParameterDefinitionTest.java"/>
+      <file line="243"
+            path="/home/jtja234/Desktop/mp3/jenkins/test/src/test/java/hudson/model/RunParameterDefinitionTest.java"/>
+      <codefragment><![CDATA[        FreeStyleBuild abortedBuild = project.scheduleBuild2(0).get();
+
+        FreeStyleProject paramProject = j.createFreeStyleProject("paramProject");
+        ParametersDefinitionProperty pdp = 
+                new ParametersDefinitionProperty(new RunParameterDefinition("RUN", 
+                                                                             project.getName(),
+                                                                             "run description",
+                                                                             RunParameterFilter.ALL));
+        paramProject.addProperty(pdp);
+
+        FreeStyleBuild build = paramProject.scheduleBuild2(0).get();
+        assertEquals(Integer.toString(project.getLastBuild().getNumber()),
+                     build.getEnvironment(new LogTaskListener(LOGGER, Level.INFO)).get("RUN_NUMBER"));]]></codefragment>
+   </duplication>
+</pmd-cpd>
