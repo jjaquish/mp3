@@ -15,6 +15,8 @@ break wouldn't work as it would simply break from the while and we
 needed to leave the for loop that the while loop was nested within.
 We used a label and called the break on the label to get around this.
 
+To test this we created the test file CopyOfJenkinsTest
+
 5. This is another duplicated code smell, except as stated in the question
 they have different parameters. We simply extracted the local variable
 for each, and then did a method extraction to eliminate the duplicated code.
