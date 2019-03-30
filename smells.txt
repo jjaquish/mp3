@@ -1,0 +1,28 @@
+MP3
+Jack Jaquish and Conner Hurst
+
+
+1. The first smell is duplicated code, where we can see a very similar sequence of lines pasted twice in the file. This is ripe for functionalizing, so we are applying method extraction to remove the smell.
+
+2. This smell is duplicated code again. Two calls that are made in series 4 times in that file. We fixed it in the same way as one, by extracting and simply calling the method.
+
+3. For smell 3 we believe this to be "feature envy." The refactoring is simply moving this method to a different class.
+
+4. For smell 4 we discussed and determined that the best method would be
+a while loop with a control variable going from 0-3. If it met the
+criteria as before it would issue a break statement, but a standard
+break wouldn't work as it would simply break from the while and we
+needed to leave the for loop that the while loop was nested within.
+We used a label and called the break on the label to get around this.
+
+5. This is another duplicated code smell, except as stated in the question
+they have different parameters. We simply extracted the local variable
+for each, and then did a method extraction to eliminate the duplicated code.
+
+6. This one took quite a while. There was quite a bit of duplicated code that
+was shown in the 'output.xml', however, much of it was not ripe for simple
+refactoring due to multiple returns, being in /target/, etc. We ended up
+finding a series of repeated statements ripe for refactoring in 'CronTabTest.java'
+which we refactored via method extraction to the method 'calBits'
+
+
